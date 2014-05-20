@@ -25,6 +25,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 var defaultLocale = require("./locales/en_US.js");
+var cpDefaultLocale = JSON.parse(JSON.stringify(defaultLocale));
 var Runtime = require("./runtime.js");
 var parse = require("./parse.js");
 var compiledFormatters = {};
@@ -36,7 +37,7 @@ var defaultFormats = defaultLocale.formats;
 Runtime.prototype.strftime = strftime;
 var runtime = new Runtime();
 
-function dateToUTC(d) {
+function dateToUtc(d) {
     var msDelta = (d.getTimezoneOffset() || 0) * 60000;
     return new Date(d.getTime() + msDelta);
 }
@@ -79,7 +80,7 @@ function strftime(fmt, d, locale, options) {
         (d === void 0 || d instanceof Date)) {
         var fn = getCompiledFormatter(fmt);
         if (d === void 0) d = new Date();
-        return fn.call(runtime, d, false, -1800, defaultLocale, defaultFormats);
+        return fn.call(runtime, d, false, -1800, defaultLocale, defaultFormats, d.getTime());
 
     }
     options = options === void 0 ? defaultOptions : options;
@@ -94,7 +95,7 @@ function strftime(fmt, d, locale, options) {
     var formats = locale.formats === void 0 ? defaultFormats : locale.formats;
 
     var tz = options.timezone;
-
+    var timestamp = d.getTime();
     if (options.utc || typeof tz === "number" || typeof tz === "string") {
         d = dateToUtc(d);
     }
@@ -113,7 +114,7 @@ function strftime(fmt, d, locale, options) {
     }
 
     var fn = getCompiledFormatter(fmt);
-    return fn.call(runtime, d, options.utc, tz, locale, formats);
+    return fn.call(runtime, d, options.utc, tz, locale, formats, timestamp);
 }
 
 strftime.strftimeTZ = function(fmt, d, locale, timezone) {
@@ -121,10 +122,12 @@ strftime.strftimeTZ = function(fmt, d, locale, timezone) {
       timezone = locale;
       locale = void 0;
     }
+    if (locale === void 0) locale = cpDefaultLocale;
     return strftime(fmt, d, locale, { timezone: timezone });
 };
 
 strftime.strftimeUTC = function (fmt, d, locale) {
+    if (locale === void 0) locale = cpDefaultLocale;
     return strftime(fmt, d, locale, { utc: true });
 };
 
@@ -133,5 +136,7 @@ strftime.localizedStrftime = function(locale) {
         return strftime(fmt, d, locale, options);
     };
 };
+
+strftime.strftime = strftime;
 
 module.exports = strftime;

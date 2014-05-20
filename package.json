@@ -11,7 +11,7 @@
         "performance"
     ],
     "scripts": {
-        "test": "grunt test"
+        "test": "node ./test/test.js"
     },
     "homepage": "https://github.com/petkaantonov/fast-strftime",
     "repository": {
@@ -28,13 +28,6 @@
         "url": "http://github.com/petkaantonov/"
     },
     "devDependencies": {
-        "grunt": "~0.4.1",
-        "grunt-contrib-jshint": "~0.6.4",
-        "jshint-stylish": "latest",
-        "mocha": "~1.12.1",
-        "grunt-cli": "~0.1.9",
-        "benchmark": "~1.0.0",
-        "semver-utils": "~1.1.0",
         "strftime": "latest"
     },
     "readmeFilename": "README.md",

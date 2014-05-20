@@ -25,9 +25,17 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 function compileComponents(components) {
+    var componentStr = "";
+    for (var i = 0; i < components.length - 1; ++i) {
+        componentStr += "(" + components[i] + ") +\n";
+    }
+    if (components.length > 0) {
+        componentStr += "(" + components[i] + ");"
+    }
     var body = "var $tmp;\n\
-        return "+components.join( " +\n" ) + ";";
-    return new Function("d", "utc", "tz", "locale", "formats", body);
+        return '' + " + componentStr;
+
+    return new Function("d", "utc", "tz", "locale", "formats", "timestamp", body);
 }
 
 function parse(fmtString) {
@@ -53,6 +61,7 @@ function parse(fmtString) {
                 formatter = getFormatter((ch = fmtString.charCodeAt(i)));
                 if (formatter === null) {
                     curStr += ("%-" + String.fromCharCode(ch));
+                    continue;
                 }
             } else if (ch === 95 /*_*/) {
                 if (++i >= len) {
@@ -63,11 +72,13 @@ function parse(fmtString) {
                 formatter = getFormatter((ch = fmtString.charCodeAt(i)));
                 if (formatter === null) {
                     curStr += ("%_" + String.fromCharCode(ch));
+                    continue;
                 }
             } else if (ch !== 48 /*0*/) {
                 formatter = getFormatter(ch);
                 if (formatter === null) {
-                    curStr += ("%" + String.fromCharCode(ch));
+                    curStr += ("%" + ch === 37 ? '' : String.fromCharCode(ch));
+                    continue;
                 }
             } else {
                 if (++i >= len) {
@@ -78,6 +89,7 @@ function parse(fmtString) {
                 formatter = getFormatter((ch = fmtString.charCodeAt(i)));
                 if (formatter === null) {
                     curStr += ("%0" + String.fromCharCode(ch));
+                    continue;
                 }
             }
 
@@ -163,8 +175,8 @@ function DateFormatter(flag, paddingCh) {
 
 DateFormatter.prototype.toString = function() {
     var p = this.paddingCh;
-    var month = "this.pad(d.getMonth() + 1, 0, 2)";
-    var day = "this.pad(d.getDate(), 0, 2)";
+    var month = "this.pad(d.getMonth() + 1, "+p+", 2)";
+    var day = "this.pad(d.getDate(), "+p+", 2)";
     var dayUnpadded = "d.getDate()";
     var year = "('' + (d.getFullYear() % 100|0))";
     var fullYear = "d.getFullYear()";
@@ -196,7 +208,7 @@ DateFormatter.prototype.toString = function() {
             break;
         case 68:
             return "(($tmp = formats.D) !== void 0\n\
-                    ? strftime($tmp, d, locale)\n\
+                    ? this.strftime($tmp, d, locale)\n\
                     : "+month+"+'/'+"+day+"+'/'+"+ year + ")";
             break;
         case 100:
@@ -207,7 +219,7 @@ DateFormatter.prototype.toString = function() {
             break;
         case 70:
             return "(($tmp = formats.F) !== void 0\n\
-                    ? strftime($tmp, d, locale)\n\
+                    ? this.strftime($tmp, d, locale)\n\
                     : "+fullYear+"+'-'+"+month+"+'-'+" + day+ ")";
             break;
         case 72:
@@ -220,10 +232,9 @@ DateFormatter.prototype.toString = function() {
             return hour12;
             break;
         case 106:
-            return "(($tmp = new Date(d.getFullYear, 0, 1)), \n\
-                     ($tmp = Math.ceil(((d.getTime() - $tmp.getTime()) \n\
-                        / (1000 * 60 * 60 * 24))), \n\
-                     (this.pad($tmp, 0, 3))";
+            return "(($tmp = new Date(d.getFullYear(), 0, 1)),                     \n\
+                    ($tmp = Math.ceil((d.getTime() - $tmp.getTime()) / 86400000)), \n\
+                    (this.pad($tmp, 0, 3)))";
             break;
         case 107:
             return p === 0
@@ -231,7 +242,7 @@ DateFormatter.prototype.toString = function() {
                         : "this.pad(d.getHours(), "+p+", 2)";
             break;
         case 76:
-            return "this.pad("+timestamp+" % 1000|0, 0, 3)";
+            return "this.pad(timestamp % 1000|0, 0, 3)";
             break;
         case 108:
             return p === 0
@@ -270,7 +281,7 @@ DateFormatter.prototype.toString = function() {
             return seconds;
             break;
         case 115:
-            return timestamp + "/1000|0";
+            return "timestamp/1000|0";
             break;
         case 84:
             return "(($tmp = formats.T) !== void 0\n\
@@ -284,7 +295,7 @@ DateFormatter.prototype.toString = function() {
             return "this.pad(this.weekNumber(d, 'sunday'), "+p+", 2)";
             break;
         case 117:
-            return "($tmp = d.getDay(), $tmp == 0 ? '7' : '' + day)";
+            return "($tmp = d.getDay(), $tmp == 0 ? '7' : '' + $tmp)";
             break;
         case 118:
             return "(($tmp = formats.v) !== void 0\n\
