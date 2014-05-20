@@ -1,3 +1,23 @@
+#Introduction
+
+Extremely fast implementation of the [node strftime module](https://github.com/samsonjs/strftime).
+
+    npm install fast-strftime
+
+#Benchmarks
+
+Results using node 0.11.13
+
+    $ node ./benchmark/fast.js
+    2014-05-20 08:15:18 PM +0300
+    2898550 op/s
+
+    $ node ./benchmark/slow.js
+    2014-05-20 08:15:22 PM +0300
+    99522 op/s
+
+-> Up to 29x faster than original
+
 #License
 
 MIT License:
