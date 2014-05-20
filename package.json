@@ -1,0 +1,46 @@
+{
+    "name": "fast-strftime",
+    "description": "Extremely fast implementation of node strftime library",
+    "version": "1.0.0",
+    "keywords": [
+        "fast",
+        "parse",
+        "parser",
+        "time",
+        "format",
+        "performance"
+    ],
+    "scripts": {
+        "test": "grunt test"
+    },
+    "homepage": "https://github.com/petkaantonov/fast-strftime",
+    "repository": {
+        "type": "git",
+        "url": "git://github.com/petkaantonov/fast-strftime.git"
+    },
+    "bugs": {
+        "url": "http://github.com/petkaantonov/fast-strftime/issues"
+    },
+    "license": "MIT",
+    "author": {
+        "name": "Petka Antonov",
+        "email": "petka_antonov@hotmail.com",
+        "url": "http://github.com/petkaantonov/"
+    },
+    "devDependencies": {
+        "grunt": "~0.4.1",
+        "grunt-contrib-jshint": "~0.6.4",
+        "jshint-stylish": "latest",
+        "mocha": "~1.12.1",
+        "grunt-cli": "~0.1.9",
+        "benchmark": "~1.0.0",
+        "semver-utils": "~1.1.0",
+        "strftime": "latest"
+    },
+    "readmeFilename": "README.md",
+    "main": "./src/fast-strftime.js",
+    "files": [
+        "src",
+        "LICENSE"
+    ]
+}

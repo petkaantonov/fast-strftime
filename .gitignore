@@ -1,0 +1,8 @@
+node_modules/*
+fast-strftime.sublime-workspace
+fast-strftime.sublime-project
+npm-debug.log
+nodex64.exe
+throwaway.js
+reader.js
+bump.js
