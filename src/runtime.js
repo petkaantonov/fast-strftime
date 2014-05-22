@@ -89,15 +89,15 @@ Runtime.prototype.spacePads2 = spacePads2;
 Runtime.prototype.spacePads3 = spacePads3;
 
 var internalizeString = (function() {
-    var obj = {"-": "norm"};
-    delete obj["-"];
+    var o = {"- ": 0};
+    delete o["- "];
     return function(str) {
-        obj[str] = true;
-        delete obj[str];
-        return str;
+        o[str] = true;
+        var ret = Object.keys(o)[0];
+        delete o[str];
+        return ret;
         try {} finally {}
     };
-    try {} finally {}
 })();
 
 function _pad(num, ch, length) {
